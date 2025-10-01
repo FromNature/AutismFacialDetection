@@ -1,7 +1,7 @@
 '''
-使用OpenFace提取面部动作单元 安装指南:F:\HelpDoc\OpenFace安装材料
-环境: ASD_Face_env
-日期: 2024-11-20
+Extract facial action units using OpenFace Installation guide: F:\HelpDoc\OpenFace安装材料
+Environment: ASD_Face_env
+Date: 2024-11-20
 '''
 
 import subprocess
@@ -10,32 +10,32 @@ import os
 
 class FaceAUProcessor:
     """
-    使用OpenFace提取面部动作单元的类。
+    Class for extracting facial action units using OpenFace.
     
     Attributes:
-        openface_exe_path (str): OpenFace可执行文件的路径。
-        output_base_dir (str): 输出结果的基础目录。
+        openface_exe_path (str): Path to the OpenFace executable file.
+        output_base_dir (str): Base directory for output results.
     """
 
     def __init__(self, openface_exe_path, output_base_dir='result\\AUs'):
         """
-        初始化FaceAUProcessor类的实例。
+        Initialize an instance of the FaceAUProcessor class.
 
         Args:
-            openface_exe_path (str): OpenFace可执行文件的路径。
-            output_base_dir (str): 输出结果的基础目录。
+            openface_exe_path (str): Path to the OpenFace executable file.
+            output_base_dir (str): Base directory for output results.
         """
         self.openface_exe_path = openface_exe_path
         self.output_base_dir = output_base_dir
 
     def detect_au(self, video_path, index, total):
         """
-        使用OpenFace检测视频中的面部动作单元。
+        Detect facial action units in video using OpenFace.
 
         Args:
-            video_path (str): 视频文件的路径。
-            index (int): 当前处理的视频索引。
-            total (int): 总视频文件数。
+            video_path (str): Path to the video file.
+            index (int): Index of the current video being processed.
+            total (int): Total number of video files.
         """
         if not os.path.exists(video_path):
             print(f"错误: 输入文件 '{video_path}' 不存在。")
@@ -67,26 +67,26 @@ class FaceAUProcessor:
 
     def process_videos(self, video_files):
         """
-        处理多个视频文件以提取面部动作单元。
+        Process multiple video files to extract facial action units.
 
         Args:
-            video_files (list): 视频文件路径的列表。
+            video_files (list): List of video file paths.
         """
-        max_workers = 24  # 或者根据需要调整
+        max_workers = 24  # Or adjust as needed
         total_files = len(video_files)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             executor.map(lambda p: self.detect_au(p[1], p[0], total_files), enumerate(video_files))
 
 def find_video_files(root_dir, video_name):
     """
-    在指定目录下查找所有包含特定视频文件的路径。
+    Find all paths containing specific video files under the specified directory.
 
     Args:
-        root_dir (str): 要搜索的根目录。
-        video_name (str): 要查找的视频文件名。
+        root_dir (str): Root directory to search.
+        video_name (str): Name of the video file to find.
 
     Returns:
-        list: 包含所有匹配视频文件完整路径的列表。
+        list: List containing all complete paths of matching video files.
     """
     video_paths = []
     for root, dirs, files in os.walk(root_dir):
@@ -94,17 +94,17 @@ def find_video_files(root_dir, video_name):
             video_paths.append(os.path.join(root, video_name))
     return video_paths
 
-# 使用示例
+# Usage example
 if __name__ == "__main__":
     openface_exe_path = 'F:\\Code\\OpenFace-OpenFace_2.2.0\\x64\\Release\\FeatureExtraction.exe'
     
-    # 单人处理
+    # Single person processing
     processor = FaceAUProcessor(openface_exe_path)
     processor.process_videos([r'K:\ZZY\M1_2.mp4']) 
 
 
-    # 批处理
-    # # 查找所有包含M1_2.mp4的视频文件路径
+    # Batch processing
+    # # Find all video file paths containing M1_2.mp4
     # root_directory = r'K:'  # K盘根目录
     # video_name = 'M1_2.mp4'
     # video_files = find_video_files(root_directory, video_name)
