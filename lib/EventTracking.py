@@ -1,5 +1,5 @@
 """
-操作EventTracking标签文件
+Operate EventTracking label files
 """
 import json
 import pandas as pd
@@ -50,11 +50,11 @@ class Events:
 
     def save_to_json(self, file):
         """
-        将事件列表保存为JSON文件        
+        Save event list as JSON file        
         Args:
-            file (str): 要保存的文件名（包括路径）。
+            file (str): Filename to save (including path).
         Returns:
-            None: 此函数没有返回值，直接写入文件。
+            None: This function has no return value, writes directly to file.
         
         """
         json_data = []
@@ -70,15 +70,15 @@ class Events:
         with open(file, 'w', encoding='utf-8') as f:
             json.dump(json_data, f, ensure_ascii=False, indent=4)
 
-    # 判断某个标签是否有时间的重叠
+    # Check if a label has time overlap
     def has_overlap(self, label: str) -> bool:
-        """判断给定标签是否有时间上的重合
+        """Check if a given label has time overlap
 
         Args:
-            label (str): 指定标签
+            label (str): Specified label
 
         Returns:
-            bool: _description_
+            bool: Whether there is overlap
         """
         time_sequence = []
         for event in self.events:
@@ -95,21 +95,21 @@ class Events:
         return flag
        
 
-    # 根据标签筛选事件
+    # Filter events by label
     def filter_by_label(self, range_labels=None, exclude_range_labels=None, stay_labels=None, exclude_labels=None, duration_min=None, duration_max=None):
         """
-        事件筛选器
-        range_labels: 查找范围. (保留range_labels中事件范围内的所有事件)  默认值为所有范围
-        exclude_range_labels: 排除范围. (排除事件标签名字在exclude_range_labels中的所有事件) 默认值为空
-        stay_labels: 保留标签. (保留事件标签名字在stay_labels中的所有事件) 默认值为所有标签
-        exclude_labels: 删除范围. (将事件标签在exclude_labels中的看作干扰删除) 默认值为空
-        # 例子: events = events.filter_by_label(stay_labels=['纵向走路'])
+        Event filter
+        range_labels: Search range. (Keep all events within the range of events in range_labels) Default value is all ranges
+        exclude_range_labels: Exclude range. (Exclude all events whose label names are in exclude_range_labels) Default value is empty
+        stay_labels: Keep labels. (Keep all events whose label names are in stay_labels) Default value is all labels
+        exclude_labels: Delete range. (Treat events with labels in exclude_labels as interference and delete them) Default value is empty
+        # Example: events = events.filter_by_label(stay_labels=['纵向走路'])
         """
         if not self.events:
             print("Events is empty.")
-            return Events()  # 返回一个空的 Events 对象
+            return Events()  # Return an empty Events object
         
-        # 判断范围
+        # Determine range
         filtered_events = Events()
         if range_labels:
             range_events = self.filter_by_label(stay_labels=range_labels)
@@ -119,7 +119,7 @@ class Events:
         else:
             filtered_events.events = self.events
         
-        # 排除范围
+        # Exclude range
         filtered_events_2 = Events()
         if exclude_range_labels:
             exclude_range_labels = [label for label in exclude_range_labels if filtered_events.has_label(label)]
@@ -130,13 +130,13 @@ class Events:
                     filtered_events_2.events.append(event)
             filtered_events.events = filtered_events_2.events
 
-        # 保留指定标签
+        # Keep specified labels
         if stay_labels and not exclude_labels:
             events_list = []
             events_list.extend([event for event in filtered_events.events if event.Label in stay_labels])
             filtered_events.events = events_list
 
-        # 排除标签片段
+        # Exclude label segments
         if exclude_labels and not stay_labels:
             exclude_events = filtered_events.filter_by_label(stay_labels=exclude_labels)
 
@@ -145,34 +145,34 @@ class Events:
                 for event in filtered_events.events:
                     if event.Label in exclude_labels: continue
 
-                    # 如果排除的开始时间在有用片段之前
+                    # If the start time of exclusion is before the useful segment
                     if e_event.StartTime <= event.StartTime and e_event.EndTime > event.StartTime and e_event.EndTime < event.EndTime:
                         events_list.append(Event(event.Index, event.Label, e_event.EndTime, event.EndTime))
 
-                    # 如果排除的结束时间在有用片段之内
+                    # If the end time of exclusion is within the useful segment
                     elif event.StartTime < e_event.StartTime and e_event.EndTime < event.EndTime:
                         events_list.append(Event(event.Index, event.Label, event.StartTime, e_event.StartTime))
                         events_list.append(Event(event.Index, event.Label, e_event.EndTime, event.EndTime))
 
-                    # 如果排除的结束时间在有用片段之后
+                    # If the end time of exclusion is after the useful segment
                     elif event.StartTime < e_event.StartTime and e_event.StartTime < event.EndTime and e_event.EndTime >= event.EndTime:
                         events_list.append(Event(event.Index, event.Label, event.StartTime, e_event.StartTime))
 
-                    # 如果排除的片段包含有用片段
+                    # If the excluded segment contains the useful segment
                     elif e_event.StartTime < event.StartTime and e_event.EndTime >= event.EndTime:
                         continue
                     else:
                         events_list.append(Event(event.Index, event.Label, event.StartTime, event.EndTime))
                 filtered_events.events = events_list
 
-        # 保留标签片段+排除标签片段
+        # Keep label segments + exclude label segments
         if stay_labels and exclude_labels:
             filtered_events = filtered_events.filter_by_label(range_labels=stay_labels, stay_labels=stay_labels+exclude_labels)
             filtered_events = filtered_events.filter_by_label(exclude_labels=exclude_labels)
 
-        # 选择时长
+        # Select duration
         if duration_min or duration_max:
-            # 转换nan值
+            # Convert nan values
             events_list = []
             for event in filtered_events.events:
                 duration = event.EndTime-event.StartTime
@@ -183,7 +183,7 @@ class Events:
         return filtered_events
     
 
-    # 返回事件的时间列表[[start_time, end_time]]
+    # Return time list of events [[start_time, end_time]]
     def get_time_list(self):
         if not self.events:
             print("Events is empty.")
@@ -197,11 +197,11 @@ class Events:
 
         return time_list_seconds
     
-    # 返回事件的帧位置列表[[开始帧, 结束帧]]
+    # Return frame position list of events [[start_frame, end_frame]]
     def get_frame_list(self, sr):
         """
-        返回事件的帧位置列表[[开始帧, 结束帧]]
-        sr: 采样率
+        Return frame position list of events [[start_frame, end_frame]]
+        sr: Sample rate
         """
         if not self.events:
             print("Events is empty.")
@@ -213,15 +213,15 @@ class Events:
 
     def has_label(self, label: str) -> bool:
         '''
-        判断是否存在某个特定的标签
+        Check if a specific label exists
         Args:
-            label (str): 需要判断的事件标签
+            label (str): Event label to check
         Return:
-            bool: 是否存在该标签
+            bool: Whether the label exists
         '''
         return any(event.Label == label for event in self.events)
 
-    # 打印所有事件
+    # Print all events
     def print_events(self):
         if not self.events:
             print("Events is empty.")
@@ -231,10 +231,10 @@ class Events:
             print(f"Index: {event.Index}, Label: {event.Label}, StartTime: {event.StartTime.strftime('%H:%M:%S.%f')[:-3]}, EndTime: {event.EndTime.strftime('%H:%M:%S.%f')[:-3]}")
 
 
-    # 输出事件统计信息
+    # Output event statistics
     def events_statistics(self, is_print=True):
         """
-        输出事件统计信息
+        Output event statistics
         """
         if not self.events:
             print("Events is empty.")
@@ -248,7 +248,7 @@ class Events:
             else:
                 label_duration[event.Label].append((event.EndTime - event.StartTime).total_seconds())
 
-        # 用于存储统计信息的列表
+        # List for storing statistical information
         result_data = []
 
         for label, duration in label_duration.items():
@@ -272,21 +272,21 @@ def extract_frames_by_positions(original_frames: Union[list, pd.DataFrame, np.nd
                                 position_list: List[Tuple[int, int]], 
                                 zero_length: int = 0):
     """
-    original_frames (list, DataFrame, ndarray): 时间序列，表示原始帧
-    position_list (List[Tuple[int, int]]): 位置列表，每个元素是一个包含起始帧和终止帧的元组
-    zero_length (int): 在两段数据之间插入的 0 的数量
+    original_frames (list, DataFrame, ndarray): Time series representing original frames
+    position_list (List[Tuple[int, int]]): Position list, each element is a tuple containing start frame and end frame
+    zero_length (int): Number of zeros to insert between two segments of data
     
-    返回提取的帧（list 或 DataFrame），中间可以插入一定数量的0
+    Return extracted frames (list or DataFrame), with a certain number of zeros inserted in between
     """
     if isinstance(original_frames, (list, np.ndarray)):
         extracted_frames = []
         for i, (start_frame, end_frame) in enumerate(position_list):
-            # 检查索引是否合法
+            # Check if index is valid
             if start_frame < 0 or end_frame >= len(original_frames):
-                raise ValueError(f"索引 {start_frame}-{end_frame} 超出范围")
-            # 提取帧
+                raise ValueError(f"Index {start_frame}-{end_frame} out of range")
+            # Extract frames
             extracted_frames.extend(original_frames[start_frame:end_frame + 1])
-            # 如果不是最后一段，则插入 zero_length 个 0
+            # If not the last segment, insert zero_length zeros
             if i < len(position_list) - 1 and zero_length > 0:
                 extracted_frames.extend([0] * int(zero_length))
         return extracted_frames
@@ -294,28 +294,28 @@ def extract_frames_by_positions(original_frames: Union[list, pd.DataFrame, np.nd
     elif isinstance(original_frames, pd.DataFrame):
         extracted_frames_list = []
         for i, (start_frame, end_frame) in enumerate(position_list):
-            # 检查索引是否合法
+            # Check if index is valid
             if start_frame < 0 or end_frame >= len(original_frames):
-                raise ValueError(f"索引 {start_frame}-{end_frame} 超出范围")
-            # 提取帧
+                raise ValueError(f"Index {start_frame}-{end_frame} out of range")
+            # Extract frames
             extracted_frames_list.append(original_frames.iloc[start_frame:end_frame + 1])
-            # 如果不是最后一段，则插入 zero_length 行全 0 数据
+            # If not the last segment, insert zero_length rows of all-zero data
             if i < len(position_list) - 1 and zero_length > 0:
                 zero_df = pd.DataFrame(0, index=range(int(zero_length)), columns=original_frames.columns)
                 extracted_frames_list.append(zero_df)
-        # 使用 pd.concat 拼接
+        # Use pd.concat to concatenate
         extracted_frames = pd.concat(extracted_frames_list).reset_index(drop=True)
         return extracted_frames
     
     else:
-        raise TypeError("original_frames 的类型必须是 list, np.ndarray 或 pd.DataFrame")
+        raise TypeError("original_frames must be of type list, np.ndarray or pd.DataFrame")
 
 
 def merge_json_files(base_json_path: str, add_json_path: str, base_video_path: str, output_json_path: str):
     """
-    合并两个json文件，base_json_path为基准文件，add_json_path为待合并文件
-    base_video_path: 基准视频路径
-    output_json_path: 输出文件路径
+    Merge two json files, base_json_path is the base file, add_json_path is the file to be merged
+    base_video_path: Base video path
+    output_json_path: Output file path
     """
     base_events = Events(base_json_path)
     add_events = Events(add_json_path)
