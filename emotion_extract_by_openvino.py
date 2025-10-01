@@ -161,8 +161,8 @@ def main():
     single_video_mode = True  # 可以通过参数控制是否使用单视频模式
     
     if single_video_mode:
-        video_path = r"test\吕振扬\M1_2.mp4"
-        output_file = r"test\Openvino\吕振扬_emotions.csv"
+        video_path = r"test\LZY\M1_2.mp4"
+        output_file = r"test\Openvino\LZY_emotions.csv"
         display_output = False
         process_video(video_path, output_file, display_output)
     else:
