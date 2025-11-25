@@ -9,7 +9,7 @@ Existing facial-expression studies in children with autism spectrum disorder (AS
 ## Core Features / 核心特征
 
 - **Emotion Variation (情绪变化)**: Temporal stability of emotional states (情绪状态的时间稳定性)
-- **Expression Intensity (表情强度)**: Magnitude of facial muscle activation (面部肌肉激活的幅度)  
+- **Expression Intensity (表情强度)**: Magnitude of facial muscle activation (面部肌肉激活的幅度)
 - **Facial Coordination (面部协调性)**: Synchrony across facial muscles (面部肌肉间的同步性)
 
 These features integrate holistic and processual representations across coarse- and fine-grained levels, enabling detailed quantification of atypical expression patterns for ASD classification and symptom severity assessment.
@@ -19,6 +19,7 @@ These features integrate holistic and processual representations across coarse- 
 ## File Structure / 文件结构
 
 ### Core Analysis Files / 核心分析文件
+
 - **`emotion_analysis.ipynb`**: Emotion feature extraction and analysis, including global explained variance, frequency, duration, transformation matrix statistics / 情绪特征提取和分析，包括全局解释方差、频率、持续时间、转移矩阵统计特征
 - **`faceAU_analysis.ipynb`**: Facial Action Unit (AU) analysis, including AU intensity changes and correlation analysis / 面部动作单元(AU)分析，包括AU强度变化和相关性分析
 - **`demographic_analysis.ipynb`**: Demographic analysis, including age, scale scores, and session duration analysis / 人口统计学特征分析，包括年龄、量表分数、Session duration分析
@@ -27,15 +28,18 @@ These features integrate holistic and processual representations across coarse- 
 - **`tsne.py`**: t-SNE dimensionality reduction visualization for high-dimensional feature space / t-SNE降维可视化，用于高维特征空间的可视化
 
 ### Feature Extraction Scripts / 特征提取脚本
-- **`emotion_extract_by_openvino.py`**: OpenVINO-based emotion recognition for real-time video emotion analysis / 基于OpenVINO的情绪识别，进行实时视频情绪分析
+
+- **`emotion_extract_by_openvino.py`**: emotion recognition for real-time video emotion analysis / 进行实时视频情绪分析
 - **`faceAU_extract_by_openface.py`**: OpenFace-based AU extraction for facial action unit detection / 基于OpenFace的AU提取，检测面部动作单元
 
 ### Utility Libraries / 工具库
+
 - **`lib/EventTracking.py`**: Event label processing tool for JSON event file parsing and time segment extraction / 事件标签处理工具，用于JSON事件文件解析和时间片段提取
 - **`lib/ffhq_align.py`**: Face alignment tool / 人脸对齐工具
 - **`lib/transfer_json.py`**: JSON data conversion tool / JSON数据转换工具
 
 ### Model Files / 模型文件
+
 - **`model/face_landmarker_v2_with_blendshapes.task`**: Facial landmark detection model / 面部关键点检测模型
 
 ## Key Results / 主要结果

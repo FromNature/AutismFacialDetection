@@ -43,28 +43,24 @@ feature_sets = {
     'E': E,
     'EI': EI,
     'EC': EC,
-    'IC': C,
+    'IC': IC,
     'EIC': EIC
 }
 
 # Create Nx1 subplot layout
 fig, axes = plt.subplots(1, len(feature_sets), figsize=(len(feature_sets)*7, 7))
 # Create Excel writer
-writer = pd.ExcelWriter('result/classify/scatter_data_scaled2.xlsx', engine='openpyxl')
+writer = pd.ExcelWriter('result/classify/scatter_data_scaled3.xlsx', engine='openpyxl')
 
 for i, (feature_type, X) in enumerate(feature_sets.items()):
     ax = axes[i]
-
-
     # Standardization
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    
-    # t-SNE dimensionality reduction
+
     tsne = TSNE(n_components=2, 
                 random_state=42, 
                 perplexity=30, 
-
                 learning_rate=200)
     X_tsne = tsne.fit_transform(X_scaled)
 
